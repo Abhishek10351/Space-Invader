@@ -20,13 +20,14 @@ def player(x, y):
 enemy_img = pygame.image.load("images/enemy.png")
 enemy_x = random.randint(0, 736)
 enemy_y = random.randint(50, 150)
-enemy_x_change = 0.3
+enemy_x_change = random.choice([0.3, -0.3])
 
 
 def enemy(x, y):
     screen.blit(enemy_img, (x, y))
 
 
+background_img = pygame.image.load("images/background.jpg")
 run = True
 
 player_x_change = 0
@@ -52,12 +53,14 @@ while run:
 
     if enemy_x <= 0:
         enemy_y += 64
-        enemy_x = 0
+        enemy_x_change = 0.3
     elif enemy_x >= 736:
         enemy_y += 64
-        enemy_x = 0
+        enemy_x_change = -0.3
     enemy_x += enemy_x_change
     screen.fill((0, 0, 0))  # change bg color
+    
+    screen.blit(background_img, (0, 0))
     player(player_x, player_y)
     enemy(enemy_x, enemy_y)
     pygame.display.update()
