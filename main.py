@@ -1,6 +1,6 @@
 import pygame
 import pathlib
-
+import random
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
@@ -18,9 +18,9 @@ def player(x, y):
 
 
 enemy_img = pygame.image.load("images/enemy.png")
-enemy_x = 350
-enemy_y = 50
-enemy_change_x = 0
+enemy_x = random.randint(0, 736)
+enemy_y = random.randint(50, 150)
+enemy_x_change = 0.3
 
 
 def enemy(x, y):
@@ -43,10 +43,20 @@ while run:
             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                 player_x_change = 0
     player_x += player_x_change
+    
     if player_x <= 0:
         player_x = 0
     elif player_x >= 736:
         player_x = 736
+    player_x += player_x_change
+
+    if enemy_x <= 0:
+        enemy_y += 64
+        enemy_x = 0
+    elif enemy_x >= 736:
+        enemy_y += 64
+        enemy_x = 0
+    enemy_x += enemy_x_change
     screen.fill((0, 0, 0))  # change bg color
     player(player_x, player_y)
     enemy(enemy_x, enemy_y)
