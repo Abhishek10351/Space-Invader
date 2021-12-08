@@ -8,13 +8,23 @@ pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load(
     r"C:\Users\user\Pictures\Games\2D\alien-ufo-pack\shipBlue_manned.png")
 pygame.display.set_icon(icon)
-player_img = pygame.image.load(r"C:\Users\user\Downloads\spaceship (1).png")
-player_x = 400
+player_img = pygame.image.load("images/player.png")
+player_x = 350
 player_y = 500
 
 
 def player(x, y):
     screen.blit(player_img, (x, y))
+
+
+enemy_img = pygame.image.load("images/enemy.png")
+enemy_x = 350
+enemy_y = 50
+enemy_change_x = 0
+
+
+def enemy(x, y):
+    screen.blit(enemy_img, (x, y))
 
 
 run = True
@@ -26,9 +36,9 @@ while run:
             run = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player_x_change = -1
+                player_x_change = -0.5
             elif event.key == pygame.K_RIGHT:
-                player_x_change = 1
+                player_x_change = 0.5
         elif event.type == pygame.KEYUP:
             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                 player_x_change = 0
@@ -39,4 +49,5 @@ while run:
         player_x = 736
     screen.fill((0, 0, 0))  # change bg color
     player(player_x, player_y)
+    enemy(enemy_x, enemy_y)
     pygame.display.update()
