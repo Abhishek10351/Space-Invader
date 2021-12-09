@@ -1,2 +1,3 @@
-# Game
-My first game
+# Space Invaders
+
+The classic space invaders game
