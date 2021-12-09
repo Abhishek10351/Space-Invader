@@ -17,8 +17,13 @@ player_y = 500
 def player(x, y):
     screen.blit(player_img, (x, y))
 
-def is_collided(x1, y1, x2, y2):
-    return pow((x1 - x2), 2) + pow((y1 - y2), 2) <= 2000
+
+def collision_occured(lx, ly, ex, ey):
+    a = not set(range(lx, lx+32)).isdisjoint(range(ex, ex+64))
+    b = not set(range(ly, ly+32)).isdisjoint(range(ey, ey+64))
+    return a and b
+
+
 enemy_img = pygame.image.load("images/enemy.png")
 enemy_x = random.randint(0, 736)
 enemy_y = random.randint(50, 150)
@@ -40,8 +45,8 @@ laser_state = "static"
 def fire_laser(x, y):
     global laser_state
     laser_state = "dynamic"
-
     screen.blit(laser_img, (x, y))
+
 
 score = 0
 run = True
@@ -69,6 +74,7 @@ while run:
         elif event.type == pygame.KEYUP:
             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                 player_x_change = 0
+
     player_x += player_x_change
 
     if player_x <= 0:
@@ -78,6 +84,7 @@ while run:
         player_x = 0
         player_x_change = 5
     player_x += player_x_change
+
     if enemy_x <= 0:
         enemy_y += 64
         enemy_x_change = 3
@@ -87,15 +94,18 @@ while run:
     enemy_x += enemy_x_change
 
     if laser_y >= 0:
-                laser_y += laser_y_change
+        laser_y += laser_y_change
     else:
         laser_state = "static"
-    if is_collided(laser_x, laser_y, enemy_x, enemy_y):
+
+    if collision_occured(laser_x, laser_y, enemy_x, enemy_y):
         score += 1
         laser_state = "static"
+        laser_x = 0
         print(f"New score is: {score}")
         enemy_x = random.randint(0, 736)
         enemy_y = random.randint(50, 150)
+
     player(player_x, player_y)
     enemy(enemy_x, enemy_y)
     if laser_state == "dynamic":
