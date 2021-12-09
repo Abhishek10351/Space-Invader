@@ -18,7 +18,7 @@ def player(x, y):
     screen.blit(player_img, (x, y))
 
 def is_collided(x1, y1, x2, y2):
-    return pow((x1 - x2), 2) + pow((y1 - y2), 2) <= 325
+    return pow((x1 - x2), 2) + pow((y1 - y2), 2) <= 2000
 enemy_img = pygame.image.load("images/enemy.png")
 enemy_x = random.randint(0, 736)
 enemy_y = random.randint(50, 150)
@@ -61,7 +61,7 @@ while run:
             elif event.key == pygame.K_SPACE:
                 if laser_state == "static":
                     laser_y_change = -20
-                    laser_y = 490
+                    laser_y = 495
                     laser_x = player_x + 15
                     lasersound = pygame.mixer.Sound("sounds/laser1.ogg")
                     lasersound.play()
@@ -72,9 +72,11 @@ while run:
     player_x += player_x_change
 
     if player_x <= 0:
-        player_x = 0
-    elif player_x >= 736:
         player_x = 736
+        player_x_change = -5
+    elif player_x >= 736:
+        player_x = 0
+        player_x_change = 5
     player_x += player_x_change
     if enemy_x <= 0:
         enemy_y += 64
@@ -90,6 +92,7 @@ while run:
         laser_state = "static"
     if is_collided(laser_x, laser_y, enemy_x, enemy_y):
         score += 1
+        laser_state = "static"
         print(f"New score is: {score}")
         enemy_x = random.randint(0, 736)
         enemy_y = random.randint(50, 150)
