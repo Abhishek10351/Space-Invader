@@ -56,15 +56,22 @@ def fire_laser(x, y):
 score_value = 0
 
 score_font = pygame.font.Font("freesansbold.ttf", 32)
+
+
 def update_score():
     font = score_font.render(f"Score: {score_value}", True, 0X06F3A3)
     screen.blit(font, (10, 10))
 
-game_over = True
+
+game_over = False
 game_over_font = pygame.font.Font("freesansbold.ttf", 64)
+
+
 def show_game_over():
     font = game_over_font.render("Game Over", True, (255, 0, 0))
     screen.blit(font, (250, 250))
+
+
 run = True
 
 player_x_change = 0
@@ -80,7 +87,7 @@ while run:
             elif event.key == pygame.K_RIGHT:
                 player_x_change = 5
             elif event.key == pygame.K_SPACE:
-                if laser_state == "static":
+                if laser_state == "static" and not game_over:
                     laser_y_change = -20
                     laser_y = 495
                     laser_x = player_x + 15
@@ -102,6 +109,8 @@ while run:
     player_x += player_x_change
 
     for i in range(number_of_enemies):
+        if enemy_y[i] >= 500:
+            game_over = True
         if enemy_x[i] <= 0:
             enemy_y[i] += 64
             enemy_x_change[i] = 3
@@ -109,7 +118,7 @@ while run:
             enemy_y[i] += 64
             enemy_x_change[i] = -3
         enemy_x[i] += enemy_x_change[i]
-        if collision_occured(laser_x, laser_y, enemy_x[i], enemy_y[i]):
+        if collision_occured(laser_x, laser_y, enemy_x[i], enemy_y[i]) and laser_state == "dynamic":
             score_value += 1
             enemy_x[i] = random.randint(0, 736)
             enemy_y[i] = random.randint(50, 150)
@@ -120,9 +129,12 @@ while run:
         laser_state = "static"
 
     player(player_x, player_y)
-    for i in range(number_of_enemies):
-        enemy(enemy_x[i], enemy_y[i])
-    if laser_state == "dynamic":
-        fire_laser(laser_x, laser_y)
+    if not game_over:
+        for i in range(number_of_enemies):
+            enemy(enemy_x[i], enemy_y[i])
+        if laser_state == "dynamic":
+            fire_laser(laser_x, laser_y)
+    else:
+        show_game_over()
     update_score()
     pygame.display.update()
