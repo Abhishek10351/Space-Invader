@@ -25,9 +25,14 @@ def collision_occured(lx, ly, ex, ey):
 
 
 enemy_img = pygame.image.load("images/enemy.png")
-enemy_x = random.randint(0, 736)
-enemy_y = random.randint(50, 150)
-enemy_x_change = random.choice([3, -3])
+enemy_x = []
+enemy_y = []
+enemy_x_change = []
+number_of_enemies = 20
+for i in range(number_of_enemies):
+    enemy_x.append(random.randint(0, 736))
+    enemy_y.append(random.randint(50, 150))
+    enemy_x_change.append(random.choice([3, -3]))
 
 
 def enemy(x, y):
@@ -48,13 +53,24 @@ def fire_laser(x, y):
     screen.blit(laser_img, (x, y))
 
 
-score = 0
+score_value = 0
+
+score_font = pygame.font.Font("freesansbold.ttf", 32)
+def update_score():
+    font = score_font.render(f"Score: {score_value}", True, 0X06F3A3)
+    screen.blit(font, (10, 10))
+
+game_over = True
+game_over_font = pygame.font.Font("freesansbold.ttf", 64)
+def show_game_over():
+    font = game_over_font.render("Game Over", True, (255, 0, 0))
+    screen.blit(font, (250, 250))
 run = True
 
 player_x_change = 0
+
 while run:
     screen.blit(background_img, (0, 0))
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -85,29 +101,28 @@ while run:
         player_x_change = 5
     player_x += player_x_change
 
-    if enemy_x <= 0:
-        enemy_y += 64
-        enemy_x_change = 3
-    elif enemy_x >= 736:
-        enemy_y += 64
-        enemy_x_change = -3
-    enemy_x += enemy_x_change
+    for i in range(number_of_enemies):
+        if enemy_x[i] <= 0:
+            enemy_y[i] += 64
+            enemy_x_change[i] = 3
+        elif enemy_x[i] >= 736:
+            enemy_y[i] += 64
+            enemy_x_change[i] = -3
+        enemy_x[i] += enemy_x_change[i]
+        if collision_occured(laser_x, laser_y, enemy_x[i], enemy_y[i]):
+            score_value += 1
+            enemy_x[i] = random.randint(0, 736)
+            enemy_y[i] = random.randint(50, 150)
 
     if laser_y >= 0:
         laser_y += laser_y_change
     else:
         laser_state = "static"
 
-    if collision_occured(laser_x, laser_y, enemy_x, enemy_y):
-        score += 1
-        laser_state = "static"
-        laser_x = 0
-        print(f"New score is: {score}")
-        enemy_x = random.randint(0, 736)
-        enemy_y = random.randint(50, 150)
-
     player(player_x, player_y)
-    enemy(enemy_x, enemy_y)
+    for i in range(number_of_enemies):
+        enemy(enemy_x[i], enemy_y[i])
     if laser_state == "dynamic":
         fire_laser(laser_x, laser_y)
+    update_score()
     pygame.display.update()
