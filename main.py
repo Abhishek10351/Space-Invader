@@ -10,9 +10,6 @@ pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load(
     "images/icon.png")
 pygame.display.set_icon(icon)
-player_img = pygame.image.load("images/player.png")
-player_x = 350
-player_y = 500
 
 class Enemy:
     def __init__(self):
@@ -21,7 +18,7 @@ class Enemy:
         self.y = random.randint(50, 150)
         self.image = pygame.image.load("images/enemy.png")
         self.x_change = random.choice([3, -3])
-    self.started = True
+    started = True
 
 
 class Player:
@@ -31,10 +28,13 @@ class Player:
         self.y = 500
         self.x_change = 0
         self.image = pygame.image.load("images/player.png")
-    self.started = True
 
-def player(x, y):
-    screen.blit(player_img, (x, y))
+
+player = Player()
+
+
+def show_player(x, y):
+    screen.blit(player.image, (x, y))
 
 
 def collision_occurred(lx, ly, ex, ey):
@@ -93,7 +93,7 @@ def show_game_over():
 
 run = True
 
-player_x_change = 0
+player.x_change = 0
 
 while run:
     screen.blit(background_img, (0, 0))
@@ -102,30 +102,30 @@ while run:
             run = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player_x_change = -5
+                player.x_change = -5
             elif event.key == pygame.K_RIGHT:
-                player_x_change = 5
+                player.x_change = 5
             elif event.key == pygame.K_SPACE:
                 if laser_state == "static" and not game_over:
                     laser_y_change = -20
                     laser_y = 495
-                    laser_x = player_x + 15
+                    laser_x = player.x + 15
                     lasersound = pygame.mixer.Sound("sounds/laser1.ogg")
                     lasersound.play()
                     fire_laser(laser_x, laser_y)
         elif event.type == pygame.KEYUP:
             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
-                player_x_change = 0
+                player.x_change = 0
 
-    player_x += player_x_change
+    player.x += player.x_change
 
-    if player_x <= 0:
-        player_x = 736
-        player_x_change = -5
-    elif player_x >= 736:
-        player_x = 0
-        player_x_change = 5
-    player_x += player_x_change
+    if player.x <= 0:
+        player.x = 736
+        player.x_change = -5
+    elif player.x >= 736:
+        player.x = 0
+        player.x_change = 5
+    player.x += player.x_change
 
     for i in range(number_of_enemies):
         if enemy_y[i] >= 532:
@@ -147,7 +147,7 @@ while run:
     else:
         laser_state = "static"
 
-    player(player_x, player_y)
+    show_player(player.x, player.y)
     if not game_over:
         for i in range(number_of_enemies):
             enemy(enemy_x[i], enemy_y[i])
