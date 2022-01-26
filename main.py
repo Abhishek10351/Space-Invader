@@ -1,7 +1,7 @@
 import pygame
 import pathlib
 import random
-from objects import Player, Enemy
+from objects import Player, Enemy, Laser
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
@@ -24,7 +24,7 @@ def collision_occurred(lx, ly, ex, ey):
     return a and b
 
 
-no_of_enemies = 200
+no_of_enemies = 5
 enemies = [Enemy() for i in range(no_of_enemies)]
 
 
@@ -33,17 +33,12 @@ def show_enemy(x, y):
 
 
 background_img = pygame.image.load("images/background.png")
-laser_img = pygame.image.load("images/laser.png")
-laser_x = 0
-laser_y = 500
-laser_y_change = 0
-laser_state = "static"
-
+laser = Laser()
 
 def fire_laser(x, y):
-    global laser_state
-    laser_state = "dynamic"
-    screen.blit(laser_img, (x, y))
+    global laser
+    laser.state = "dynamic"
+    screen.blit(laser.image, (x, y))
 
 
 score_value = 0
@@ -80,13 +75,13 @@ while run:
             elif event.key == pygame.K_RIGHT:
                 player.x_change = 5
             elif event.key == pygame.K_SPACE:
-                if laser_state == "static" and not game_over:
-                    laser_y_change = -20
-                    laser_y = 495
-                    laser_x = player.x + 15
+                if laser.state == "static" and not game_over:
+                    laser.y_change = -20
+                    laser.y = 495
+                    laser.x = player.x + 15
                     lasersound = pygame.mixer.Sound("sounds/laser1.ogg")
                     lasersound.play()
-                    fire_laser(laser_x, laser_y)
+                    fire_laser(laser.x, laser.y)
         elif event.type == pygame.KEYUP:
             if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                 player.x_change = 0
@@ -111,22 +106,23 @@ while run:
             enemy.y += 64
             enemy.x_change = -3
         enemy.x += enemy.x_change
-        if collision_occurred(laser_x, laser_y, enemy.x, enemy.y) and laser_state == "dynamic":
-            score_value += 1
-            enemy.x = random.randint(0, 736)
-            enemy.y = random.randint(50, 150)
+        if laser.state == "dynamic":
+            if collision_occurred(laser.x, laser.y, enemy.x, enemy.y) and laser.state == "dynamic":
+                score_value += 1
+                enemy.x = random.randint(0, 736)
+                enemy.y = random.randint(50, 150)
 
-    if laser_y >= 0:
-        laser_y += laser_y_change
+    if laser.y >= 0:
+        laser.y += laser.y_change
     else:
-        laser_state = "static"
+        laser.state = "static"
 
     show_player(player.x, player.y)
     if not game_over:
         for enemy in enemies:
             show_enemy(enemy.x, enemy.y)
-        if laser_state == "dynamic":
-            fire_laser(laser_x, laser_y)
+        if laser.state == "dynamic":
+            fire_laser(laser.x, laser.y)
     else:
         show_game_over()
     update_score()
