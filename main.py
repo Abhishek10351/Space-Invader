@@ -11,6 +11,7 @@ icon = pygame.image.load(
     "images/icon.png")
 pygame.display.set_icon(icon)
 
+
 class Enemy:
     def __init__(self):
         self.started = False
@@ -23,7 +24,6 @@ class Enemy:
 
 class Player:
     def __init__(self):
-        self.started = False
         self.x = 300
         self.y = 500
         self.x_change = 0
@@ -43,19 +43,12 @@ def collision_occurred(lx, ly, ex, ey):
     return a and b
 
 
-enemy_img = pygame.image.load("images/enemy.png")
-enemy_x = []
-enemy_y = []
-enemy_x_change = []
 number_of_enemies = 20
-for i in range(number_of_enemies):
-    enemy_x.append(random.randint(0, 736))
-    enemy_y.append(random.randint(50, 150))
-    enemy_x_change.append(random.choice([3, -3]))
+enemies = [Enemy() for i in range(number_of_enemies)]
+print(len(enemies))
 
-
-def enemy(x, y):
-    screen.blit(enemy_img, (x, y))
+def show_enemy(x, y):
+    screen.blit(enemy.image, (x, y))
 
 
 background_img = pygame.image.load("images/background.png")
@@ -127,20 +120,20 @@ while run:
         player.x_change = 5
     player.x += player.x_change
 
-    for i in range(number_of_enemies):
-        if enemy_y[i] >= 532:
+    for enemy in enemies:
+        if enemy.y >= 532:
             game_over = True
-        if enemy_x[i] <= 0:
-            enemy_y[i] += 64
-            enemy_x_change[i] = 3
-        elif enemy_x[i] >= 736:
-            enemy_y[i] += 64
-            enemy_x_change[i] = -3
-        enemy_x[i] += enemy_x_change[i]
-        if collision_occurred(laser_x, laser_y, enemy_x[i], enemy_y[i]) and laser_state == "dynamic":
+        if enemy.x <= 0:
+            enemy.y += 64
+            enemy.x_change = 3
+        elif enemy.x >= 736:
+            enemy.y += 64
+            enemy.x_change = -3
+        enemy.x += enemy.x_change
+        if collision_occurred(laser_x, laser_y, enemy.x, enemy.y) and laser_state == "dynamic":
             score_value += 1
-            enemy_x[i] = random.randint(0, 736)
-            enemy_y[i] = random.randint(50, 150)
+            enemy.x = random.randint(0, 736)
+            enemy.y = random.randint(50, 150)
 
     if laser_y >= 0:
         laser_y += laser_y_change
@@ -149,8 +142,8 @@ while run:
 
     show_player(player.x, player.y)
     if not game_over:
-        for i in range(number_of_enemies):
-            enemy(enemy_x[i], enemy_y[i])
+        for enemy in enemies:
+            show_enemy(enemy.x, enemy.y)
         if laser_state == "dynamic":
             fire_laser(laser_x, laser_y)
     else:
