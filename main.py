@@ -2,6 +2,7 @@ import pygame
 import pathlib
 import random
 from math import pow
+
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
@@ -13,12 +14,30 @@ player_img = pygame.image.load("images/player.png")
 player_x = 350
 player_y = 500
 
+class Enemy:
+    def __init__(self):
+        self.started = False
+        self.x = random.randint(0, 736)
+        self.y = random.randint(50, 150)
+        self.image = pygame.image.load("images/enemy.png")
+        self.x_change = random.choice([3, -3])
+    self.started = True
+
+
+class Player:
+    def __init__(self):
+        self.started = False
+        self.x = 300
+        self.y = 500
+        self.x_change = 0
+        self.image = pygame.image.load("images/player.png")
+    self.started = True
 
 def player(x, y):
     screen.blit(player_img, (x, y))
 
 
-def collision_occured(lx, ly, ex, ey):
+def collision_occurred(lx, ly, ex, ey):
     a = not set(range(lx, lx+32)).isdisjoint(range(ex, ex+64))
     b = not set(range(ly, ly+32)).isdisjoint(range(ey, ey+64))
     return a and b
@@ -109,7 +128,7 @@ while run:
     player_x += player_x_change
 
     for i in range(number_of_enemies):
-        if enemy_y[i] >= 500:
+        if enemy_y[i] >= 532:
             game_over = True
         if enemy_x[i] <= 0:
             enemy_y[i] += 64
@@ -118,7 +137,7 @@ while run:
             enemy_y[i] += 64
             enemy_x_change[i] = -3
         enemy_x[i] += enemy_x_change[i]
-        if collision_occured(laser_x, laser_y, enemy_x[i], enemy_y[i]) and laser_state == "dynamic":
+        if collision_occurred(laser_x, laser_y, enemy_x[i], enemy_y[i]) and laser_state == "dynamic":
             score_value += 1
             enemy_x[i] = random.randint(0, 736)
             enemy_y[i] = random.randint(50, 150)
