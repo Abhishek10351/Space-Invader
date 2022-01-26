@@ -1,8 +1,7 @@
 import pygame
 import pathlib
 import random
-from math import pow
-
+from objects import Player, Enemy
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
@@ -10,24 +9,6 @@ pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load(
     "images/icon.png")
 pygame.display.set_icon(icon)
-
-
-class Enemy:
-    def __init__(self):
-        self.started = False
-        self.x = random.randint(0, 736)
-        self.y = random.randint(50, 150)
-        self.image = pygame.image.load("images/enemy.png")
-        self.x_change = random.choice([3, -3])
-    started = True
-
-
-class Player:
-    def __init__(self):
-        self.x = 300
-        self.y = 500
-        self.x_change = 0
-        self.image = pygame.image.load("images/player.png")
 
 
 player = Player()
@@ -43,9 +24,9 @@ def collision_occurred(lx, ly, ex, ey):
     return a and b
 
 
-number_of_enemies = 20
-enemies = [Enemy() for i in range(number_of_enemies)]
-print(len(enemies))
+no_of_enemies = 200
+enemies = [Enemy() for i in range(no_of_enemies)]
+
 
 def show_enemy(x, y):
     screen.blit(enemy.image, (x, y))
